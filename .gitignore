@@ -4,6 +4,8 @@ out/
 !**/src/test/**/out/
 .idea
 
+lib
+out
 
 ### Eclipse ###
 .apt_generated
