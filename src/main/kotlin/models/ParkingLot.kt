@@ -1,5 +1,6 @@
 package models
 
+import models.factory.TicketsFactory
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -34,7 +35,7 @@ class ParkingLot(numberOfSpots: Int) {
 
         availableSpot.setVehicle(vehicle)
 
-        return ParkingTicket(1, availableSpot.getSpotID(), LocalDateTime.now())
+        return TicketsFactory.getTicketFor(availableSpot.getSpotID(), LocalDateTime.now())
     }
 
     fun unparkVehicle(ticket: ParkingTicket): Receipt {
