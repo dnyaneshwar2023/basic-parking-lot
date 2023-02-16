@@ -3,6 +3,7 @@ package models
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDateTime
 
 class ParkingLotTest {
 
@@ -54,4 +55,37 @@ class ParkingLotTest {
 
         assertThrows<Exception> { parkingLot.parkVehicle(vehicle) }
     }
+
+    @Test
+    fun `it should unpark the vehicle to first spot given it was parked on a spot`() {
+        val vehicle = Vehicle(1, VehicleType.CAR)
+        val parkingLot = ParkingLot(5)
+        val parkingTicket = parkingLot.parkVehicle(vehicle)
+
+        val receipt = parkingLot.unparkVehicle(parkingTicket)
+
+        assertEquals(0, receipt.spotID)
+        assertEquals(10,receipt.bill)
+    }
+
+    @Test
+    fun `it should throw exception while unparking given it was not parked on a spot`() {
+        val parkingLot = ParkingLot(5)
+        val parkingTicket = ParkingTicket(1,0, LocalDateTime.now())
+
+        assertThrows<Exception> { parkingLot.unparkVehicle(parkingTicket) }
+    }
+
+
+    @Test
+    fun `it should throw exception while unparking given it was already unparked before`() {
+        val vehicle = Vehicle(1, VehicleType.CAR)
+        val parkingLot = ParkingLot(5)
+        val ticket = parkingLot.parkVehicle(vehicle)
+        parkingLot.unparkVehicle(ticket)
+
+        assertThrows<Exception> { parkingLot.unparkVehicle(ticket) }
+    }
+
+
 }
