@@ -1,17 +1,12 @@
 package models
 
+import constants.Charges
 import generators.TicketGenerator
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
-const val PER_HOUR_CHARGE = 10
-
 class ParkingLot(numberOfSpots: Int) {
     private val spots = MutableList(numberOfSpots) { ParkingSpot(it) }
-
-    fun getSpotById(spotId: Int): ParkingSpot {
-        return spots[spotId]
-    }
 
     fun parkVehicle(vehicle: Vehicle, entryTime: LocalDateTime): ParkingTicket {
         if (!isSpotAvailable()) {
@@ -21,6 +16,10 @@ class ParkingLot(numberOfSpots: Int) {
         availableSpot.setVehicle(vehicle)
 
         return TicketGenerator.getTicketFor(availableSpot.getSpotID(), entryTime)
+    }
+
+    fun getSpotById(spotId: Int): ParkingSpot {
+        return spots[spotId]
     }
 
     fun unparkVehicle(ticket: ParkingTicket, exitTime: LocalDateTime): Receipt {
@@ -38,7 +37,7 @@ class ParkingLot(numberOfSpots: Int) {
 
     private fun calculateBill(ticket: ParkingTicket, exitTime: LocalDateTime): Int {
         val numberOfHours = ticket.entryTime.until(exitTime, ChronoUnit.HOURS).toInt()
-        return numberOfHours * PER_HOUR_CHARGE
+        return numberOfHours * Charges.PER_HOUR_CHARGE
     }
 
     private fun getFirstAvailableSpot(): ParkingSpot {
