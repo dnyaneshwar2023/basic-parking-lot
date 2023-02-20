@@ -5,34 +5,26 @@ import generators.TicketGenerator
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
-class ParkingLot(numberOfSpots: Int) {
-    private val spots = MutableList(numberOfSpots) { ParkingSpot(it) }
+class ParkingLot(numberOfFloors: Int, spotsPerFloor: Int) {
+
+    private val floors = MutableList(numberOfFloors) { ParkingFloor(it, spotsPerFloor) }
+
+    fun getSpotBySpotNumberAndFloorNumber(spotNumber: Int, floorNumber: Int): ParkingSpot {
+        return floors[floorNumber - 1].getSpotById(spotNumber)
+    }
 
     fun parkVehicle(vehicle: Vehicle, entryTime: LocalDateTime): ParkingTicket? {
-        if (!isSpotAvailable()) {
-            return null;
-        }
-        val availableSpot = getFirstAvailableSpot()
+        val availableSpot = getFirstAvailableSpot() ?: return null
         availableSpot.setVehicle(vehicle)
 
         return TicketGenerator.getTicketFor(availableSpot.getSpotID(), entryTime)
     }
 
-    fun getSpotById(spotId: Int): ParkingSpot {
-        return spots[spotId]
-    }
-
     fun unparkVehicle(ticket: ParkingTicket, exitTime: LocalDateTime): Receipt? {
-        if (spots[ticket.spotID].getVehicle() == null) {
-            return null;
-        }
+        val spotToUnpark = getSpotBySpotNumberAndFloorNumber(ticket.spotID, ticket.floorNumber)
+        spotToUnpark.removeVehicle()
 
-        spots[ticket.spotID].removeVehicle()
         return Receipt(ticket.ticketID, ticket.spotID, ticket.entryTime, exitTime, calculateBill(ticket, exitTime))
-    }
-
-    private fun isSpotAvailable(): Boolean {
-        return spots.any { spot -> spot.isAvailable() }
     }
 
     private fun calculateBill(ticket: ParkingTicket, exitTime: LocalDateTime): Int {
@@ -40,7 +32,7 @@ class ParkingLot(numberOfSpots: Int) {
         return numberOfHours * Charges.PER_HOUR_CHARGE
     }
 
-    private fun getFirstAvailableSpot(): ParkingSpot {
-        return spots.first { spot -> spot.isAvailable() }
+    private fun getFirstAvailableSpot(): ParkingSpot? {
+        return floors.firstOrNull { floor -> floor.isSpotAvailable() }?.getFirstAvailableSpot()
     }
 }
