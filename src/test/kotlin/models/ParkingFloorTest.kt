@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 
 class ParkingFloorTest {
 
-
     @Test
     fun `it should create new parking floor`() {
 
@@ -14,6 +13,19 @@ class ParkingFloorTest {
         assertEquals(parkingFloor.floorNumber, 1)
         assertEquals(5, parkingFloor.spots.size)
 
+    }
+
+    @Test
+    fun `it should return true given spot is available to park`() {
+        val parkingFloor = ParkingFloor(1,5)
+
+        assertTrue(parkingFloor.isSpotAvailable())
+    }
+    @Test
+    fun `it should return false given no spot is available to park`() {
+        val parkingFloor = ParkingFloor(1,0)
+
+        assertFalse(parkingFloor.isSpotAvailable())
     }
 
     @Test
