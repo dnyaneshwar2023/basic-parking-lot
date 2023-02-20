@@ -10,8 +10,14 @@ class ParkingLot(numberOfFloors: Int, spotsPerFloor: Int) {
     fun getSpotBySpotNumberAndFloorNumber(spotNumber: Int, floorNumber: Int): ParkingSpot {
         return floors[floorNumber].getSpotById(spotNumber)
     }
+
     fun calculateBill(ticket: ParkingTicket, exitTime: LocalDateTime): Int {
-        val numberOfHours = ticket.entryTime.until(exitTime, ChronoUnit.HOURS).toInt()
+        val numberOfMinutes = ticket.entryTime.until(exitTime, ChronoUnit.MINUTES)
+        var numberOfHours = (numberOfMinutes / 60).toInt()
+
+        if (numberOfMinutes % 60 > 0) {
+            numberOfHours++
+        }
         return numberOfHours * Charges.PER_HOUR_CHARGE
     }
 
