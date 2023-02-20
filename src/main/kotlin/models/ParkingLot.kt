@@ -20,11 +20,18 @@ class ParkingLot(numberOfFloors: Int, spotsPerFloor: Int) {
         return TicketGenerator.getTicketFor(availableSpot.getSpotID(), entryTime)
     }
 
-    fun unparkVehicle(ticket: ParkingTicket, exitTime: LocalDateTime): Receipt? {
+    fun unparkVehicle(ticket: ParkingTicket, exitTime: LocalDateTime): Receipt {
         val spotToUnpark = getSpotBySpotNumberAndFloorNumber(ticket.spotID, ticket.floorNumber)
         spotToUnpark.removeVehicle()
 
-        return Receipt(ticket.ticketID, ticket.spotID, ticket.entryTime, exitTime, calculateBill(ticket, exitTime))
+        return Receipt(
+            ticket.ticketID,
+            ticket.spotID,
+            ticket.floorNumber,
+            ticket.entryTime,
+            exitTime,
+            calculateBill(ticket, exitTime)
+        )
     }
 
     private fun calculateBill(ticket: ParkingTicket, exitTime: LocalDateTime): Int {
