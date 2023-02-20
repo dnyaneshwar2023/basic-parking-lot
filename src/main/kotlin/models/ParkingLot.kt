@@ -8,9 +8,9 @@ import java.time.temporal.ChronoUnit
 class ParkingLot(numberOfSpots: Int) {
     private val spots = MutableList(numberOfSpots) { ParkingSpot(it) }
 
-    fun parkVehicle(vehicle: Vehicle, entryTime: LocalDateTime): ParkingTicket {
+    fun parkVehicle(vehicle: Vehicle, entryTime: LocalDateTime): ParkingTicket? {
         if (!isSpotAvailable()) {
-            throw Exception("No Spot available for parking")
+            return null;
         }
         val availableSpot = getFirstAvailableSpot()
         availableSpot.setVehicle(vehicle)
@@ -22,9 +22,9 @@ class ParkingLot(numberOfSpots: Int) {
         return spots[spotId]
     }
 
-    fun unparkVehicle(ticket: ParkingTicket, exitTime: LocalDateTime): Receipt {
+    fun unparkVehicle(ticket: ParkingTicket, exitTime: LocalDateTime): Receipt? {
         if (spots[ticket.spotID].getVehicle() == null) {
-            throw Exception("No Vehicle Available at the spot")
+            return null;
         }
 
         spots[ticket.spotID].removeVehicle()
