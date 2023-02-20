@@ -8,7 +8,7 @@ class ParkingSpotTest {
     @Test
     fun `it should set the vehicle to given spot given spot is free`() {
         val vehicle = Vehicle(1, VehicleType.CAR)
-        val parkingSpot = ParkingSpot(1)
+        val parkingSpot = ParkingSpot(1, 1)
 
         parkingSpot.setVehicle(vehicle)
 

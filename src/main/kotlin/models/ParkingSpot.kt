@@ -1,6 +1,6 @@
 package models
 
-class ParkingSpot(private val spotID: Int) {
+class ParkingSpot(private val spotID: Int, private val floorNumber: Int) {
     private var vehicle: Vehicle? = null
     fun setVehicle(vehicle: Vehicle) {
         this.vehicle = vehicle
@@ -8,6 +8,10 @@ class ParkingSpot(private val spotID: Int) {
 
     fun getSpotID(): Int {
         return spotID
+    }
+
+    fun getFloorNumber(): Int {
+        return floorNumber
     }
 
     fun getVehicle(): Vehicle? {

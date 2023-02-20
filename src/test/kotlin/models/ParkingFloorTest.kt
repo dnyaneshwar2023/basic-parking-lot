@@ -24,6 +24,7 @@ class ParkingFloorTest {
 
         assertNotNull(firstAvailableSpot)
         assertEquals(0, firstAvailableSpot!!.getSpotID())
+        assertEquals(1, firstAvailableSpot.getFloorNumber())
     }
 
     @Test
