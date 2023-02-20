@@ -1,5 +1,6 @@
 package models
 
-class ParkingFloor {
+class ParkingFloor(val floorNumber: Int, numberOfSpots: Int) {
+    val spots = MutableList(numberOfSpots) { ParkingSpot(it) }
 
 }
