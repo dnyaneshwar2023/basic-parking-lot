@@ -10,14 +10,14 @@ class ParkingLot(numberOfFloors: Int, spotsPerFloor: Int) {
     private val floors = MutableList(numberOfFloors) { ParkingFloor(it, spotsPerFloor) }
 
     fun getSpotBySpotNumberAndFloorNumber(spotNumber: Int, floorNumber: Int): ParkingSpot {
-        return floors[floorNumber - 1].getSpotById(spotNumber)
+        return floors[floorNumber].getSpotById(spotNumber)
     }
 
     fun parkVehicle(vehicle: Vehicle, entryTime: LocalDateTime): ParkingTicket? {
         val availableSpot = getFirstAvailableSpot() ?: return null
         availableSpot.setVehicle(vehicle)
 
-        return TicketGenerator.getTicketFor(availableSpot.getSpotID(), entryTime)
+        return TicketGenerator.getTicketFor(availableSpot.getSpotID(), availableSpot.getFloorNumber(), entryTime)
     }
 
     fun unparkVehicle(ticket: ParkingTicket, exitTime: LocalDateTime): Receipt {

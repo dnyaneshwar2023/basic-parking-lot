@@ -12,7 +12,7 @@ class ParkingFloor(val floorNumber: Int, numberOfSpots: Int) {
     }
 
     fun getSpotById(spotNumber: Int): ParkingSpot {
-        return spots[spotNumber - 1]
+        return spots[spotNumber]
     }
 
 }
