@@ -20,7 +20,7 @@ open class FeeCalculationStrategy(private val intervals: Map<VehicleType, ArrayL
                     break
                 }
 
-                val chargableHours = min(numberOfHours - interval.start + 1, interval.end - interval.start + 1)
+                val chargableHours = min(numberOfHours - interval.start , interval.end - interval.start)
                 totalAmount += (chargableHours * interval.charge)
             }
         } else {
