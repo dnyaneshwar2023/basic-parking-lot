@@ -7,7 +7,8 @@ import java.time.temporal.ChronoUnit
 import kotlin.math.min
 
 open class FeeCalculationStrategy(private val intervals: Map<VehicleType, ArrayList<FeeInterval>>) {
-    open fun getBillAmount(startTime: LocalDateTime, endTime: LocalDateTime, vehicleType: VehicleType): Int {
+
+    fun getNumberOfHours(startTime: LocalDateTime, endTime: LocalDateTime): Int {
         val numberOfMinutes = startTime.until(endTime, ChronoUnit.MINUTES)
 
         var numberOfHours = (numberOfMinutes / 60).toInt()
@@ -15,8 +16,13 @@ open class FeeCalculationStrategy(private val intervals: Map<VehicleType, ArrayL
         if (numberOfMinutes % 60 > 0) {
             numberOfHours++
         }
+        return numberOfHours
+    }
 
+    open fun getBillAmount(startTime: LocalDateTime, endTime: LocalDateTime, vehicleType: VehicleType): Int {
         var totalAmount = 0
+
+        val numberOfHours = getNumberOfHours(startTime, endTime)
 
         val chargeIntervals = intervals[vehicleType]
         if (chargeIntervals != null) {
@@ -26,7 +32,6 @@ open class FeeCalculationStrategy(private val intervals: Map<VehicleType, ArrayL
                 }
 
                 val chargableHours = min(numberOfHours - interval.start + 1, interval.end - interval.start + 1)
-
                 totalAmount += (chargableHours * interval.charge)
             }
         } else {
