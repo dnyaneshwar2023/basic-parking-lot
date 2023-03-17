@@ -17,7 +17,7 @@ class FeeCalculationStrategyTest {
             LocalDateTime.now(), LocalDateTime.now().plusMinutes(61), VehicleType.CAR
         )
 
-        assertEquals(100, billAmount)
+        assertEquals(200, billAmount)
 
 
     }
