@@ -4,6 +4,7 @@ import models.FeeInterval
 import models.VehicleType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 
 class AirportFeeCalculationStrategyTest {
@@ -28,6 +29,7 @@ class AirportFeeCalculationStrategyTest {
 
         Assertions.assertEquals(400, billAmount)
     }
+
     @Test
     fun `it should calculate airport parking lot fee for given start and end time given number of days are more than 1`() {
 
@@ -48,4 +50,34 @@ class AirportFeeCalculationStrategyTest {
 
         Assertions.assertEquals(7240, billAmount)
     }
+
+    @Test
+    fun `it should throw exception when there is no intervals present for a particular vehicle type`() {
+        val intervals = mapOf(VehicleType.CAR to arrayListOf(FeeInterval(0, 1000, 100)))
+        val perDaysFees = mapOf(VehicleType.CAR to 2000)
+
+        val feeCalculationStrategy = AirportFeeCalculationStrategy(intervals, perDaysFees)
+
+        assertThrows<Exception> {
+            feeCalculationStrategy.getBillAmount(
+                LocalDateTime.now(), LocalDateTime.now().plusMinutes(61), VehicleType.MOTORCYCLE
+            )
+        }
+    }
+
+
+    @Test
+    fun `it should throw exception when there is no extraPerDayFee added for a particular vehicle type`() {
+        val intervals = mapOf(VehicleType.CAR to arrayListOf(FeeInterval(0, 1000, 100)))
+        val perDaysFees = mapOf(VehicleType.MOTORCYCLE to 2000)
+
+        val feeCalculationStrategy = AirportFeeCalculationStrategy(intervals, perDaysFees)
+
+        assertThrows<Exception> {
+            feeCalculationStrategy.getBillAmount(
+                LocalDateTime.now(), LocalDateTime.now().plusMinutes(61), VehicleType.CAR
+            )
+        }
+    }
+
 }

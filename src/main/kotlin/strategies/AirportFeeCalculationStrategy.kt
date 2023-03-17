@@ -13,6 +13,10 @@ class AirportFeeCalculationStrategy(
     override fun getBillAmount(startTime: LocalDateTime, endTime: LocalDateTime, vehicleType: VehicleType): Int {
         var totalAmount = 0
         totalAmount += super.getBillAmount(startTime, endTime, vehicleType)
+
+        if (extraPerDayFee[vehicleType] == null) {
+            throw Exception("No per day fee added for given vehicle type")
+        }
         totalAmount += (DateTimeUtil.getNumberOfDaysBetween(startTime, endTime) - 1) * extraPerDayFee[vehicleType]!!
 
         return totalAmount
