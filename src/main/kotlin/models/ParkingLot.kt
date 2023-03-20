@@ -1,10 +1,9 @@
 package models
 
-import constants.Charges
+import strategies.FeeCalculationStrategy
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 
-class ParkingLot(numberOfFloors: Int, spotsPerFloor: Int) {
+class ParkingLot(numberOfFloors: Int, spotsPerFloor: Int, private val feeCalculationStrategy: FeeCalculationStrategy) {
 
     private val floors = MutableList(numberOfFloors) { ParkingFloor(it, spotsPerFloor) }
     fun getSpotBySpotNumberAndFloorNumber(spotNumber: Int, floorNumber: Int): ParkingSpot {
@@ -12,13 +11,11 @@ class ParkingLot(numberOfFloors: Int, spotsPerFloor: Int) {
     }
 
     fun calculateBill(ticket: ParkingTicket, exitTime: LocalDateTime): Int {
-        val numberOfMinutes = ticket.entryTime.until(exitTime, ChronoUnit.MINUTES)
-        var numberOfHours = (numberOfMinutes / 60).toInt()
-
-        if (numberOfMinutes % 60 > 0) {
-            numberOfHours++
-        }
-        return numberOfHours * Charges.PER_HOUR_CHARGE
+        return feeCalculationStrategy.getBillAmount(
+            ticket.entryTime,
+            exitTime,
+            getSpotBySpotNumberAndFloorNumber(ticket.spotID, ticket.floorNumber).getVehicle()!!.type
+        )
     }
 
     fun getFirstAvailableSpot(): ParkingSpot? {
