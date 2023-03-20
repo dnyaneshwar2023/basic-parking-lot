@@ -11,6 +11,7 @@ class ParkingLot(numberOfFloors: Int, spotsPerFloor: Int, private val feeCalcula
     }
 
     fun calculateBill(ticket: ParkingTicket, exitTime: LocalDateTime): Int {
+        println(getSpotBySpotNumberAndFloorNumber(ticket.spotID, ticket.floorNumber).getVehicle())
         return feeCalculationStrategy.getBillAmount(
             ticket.entryTime,
             exitTime,

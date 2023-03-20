@@ -17,12 +17,12 @@ class ParkingService(private val parkingLot: ParkingLot) {
 
     fun unpark(ticket: ParkingTicket, exitTime: LocalDateTime): Receipt? {
         val spotToUnpark = parkingLot.getSpotBySpotNumberAndFloorNumber(ticket.spotID, ticket.floorNumber)
+
         if (spotToUnpark.getVehicle() == null) {
             return null
         }
-        spotToUnpark.removeVehicle()
 
-        return Receipt(
+        val receipt = Receipt(
             ticket.ticketID,
             ticket.spotID,
             ticket.floorNumber,
@@ -30,5 +30,10 @@ class ParkingService(private val parkingLot: ParkingLot) {
             exitTime,
             parkingLot.calculateBill(ticket, exitTime)
         )
+
+        spotToUnpark.removeVehicle()
+
+        return receipt
+
     }
 }

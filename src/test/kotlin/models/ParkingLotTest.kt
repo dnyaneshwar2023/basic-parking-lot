@@ -3,13 +3,17 @@ package models
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import services.ParkingService
+import strategies.FeeCalculationStrategy
 import java.time.LocalDateTime
 
 class ParkingLotTest {
 
+    private val dummyFeeStrategy = FeeCalculationStrategy(mapOf(VehicleType.CAR to arrayListOf()))
+
     @Test
     fun `it should return the first available spot from the parking lot`() {
-        val parkingLot = ParkingLot(1, 1)
+        val parkingLot = ParkingLot(1, 1, dummyFeeStrategy)
 
         val firstAvailableSpot = parkingLot.getFirstAvailableSpot()
 
@@ -19,7 +23,7 @@ class ParkingLotTest {
 
     @Test
     fun `it should return null if no spot available`() {
-        val parkingLot = ParkingLot(3, 0)
+        val parkingLot = ParkingLot(3, 0, dummyFeeStrategy)
 
         val firstAvailableSpot = parkingLot.getFirstAvailableSpot()
 
@@ -27,20 +31,31 @@ class ParkingLotTest {
     }
 
     @Test
-    fun `it should calculate the bill for 1 hour`() {
-        val parkingLot = ParkingLot(3, 1)
+    fun `it should calculate the bill for 1 hour for car at Mall`() {
+        val feeCalculationStrategy =
+            FeeCalculationStrategy(mapOf(VehicleType.CAR to arrayListOf(FeeInterval(0, 1000000, 20))))
+
+        val parkingLot = ParkingLot(3, 1, feeCalculationStrategy)
+
+        val parkingTicket = ParkingService(parkingLot).park(Vehicle(0, VehicleType.CAR), LocalDateTime.now())
 
         val billAmount =
-            parkingLot.calculateBill(ParkingTicket(1, 0, 0, LocalDateTime.now()), LocalDateTime.now().plusHours(1))
-        assertEquals(10, billAmount)
+            parkingLot.calculateBill(parkingTicket!!, LocalDateTime.now().plusHours(1))
+        assertEquals(20, billAmount)
     }
 
     @Test
-    fun `it should calculate the bill for 1 hour 10 minutes`() {
-        val parkingLot = ParkingLot(3, 1)
+    fun `it should calculate the bill for 1 hour 10 minutes for car at mall`() {
+
+        val feeCalculationStrategy =
+            FeeCalculationStrategy(mapOf(VehicleType.CAR to arrayListOf(FeeInterval(0, 1000000, 20))))
+
+        val parkingLot = ParkingLot(3, 1, feeCalculationStrategy)
+
+        val parkingTicket = ParkingService(parkingLot).park(Vehicle(0, VehicleType.CAR), LocalDateTime.now())
 
         val billAmount =
-            parkingLot.calculateBill(ParkingTicket(1, 0, 0, LocalDateTime.now()), LocalDateTime.now().plusHours(1).plusMinutes(10))
-        assertEquals(20, billAmount)
+            parkingLot.calculateBill(parkingTicket!!, LocalDateTime.now().plusHours(1).plusMinutes(15))
+        assertEquals(40, billAmount)
     }
 }
